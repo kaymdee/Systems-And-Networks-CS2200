@@ -1,0 +1,35 @@
+CS 2200 Spring 2021
+Project 4
+
+Name:
+GT Username: nrahul3
+
+Problem 1B (FCFS Scheduler)
+----------
+The relationship between the number of CPUs and total execution time is not linear. The results of the simulation are as follows:
+
+1 CPU: 67.9s execution time
+2 CPUs: 39.6s execution time
+4 CPUs: 37.1s execution time
+
+The reduction in execution time when moving from 1 CPU to 2 CPUs is much higher as compared to going from 2 to 4, where the improvement in execution time is very low. Increasing the number of CPUs from 1 to 2 has a significant reduction in the execution time because  with 2 CPUs there is high CPU utilization, and processes which would have been on the ready queue waiting for a single CPU to be available in single CPU simulation would now complete its CPU burst in the second CPU. However, when the number of CPUs are changed from 2 to 4 the execution time has little effect because CPU utilization becomes low. This happens because majority of the time there will be multiple idle CPUs because all processes are either already running on a different CPU, or waiting in the I/O queue. The total time spent in the ready state for processes in 2 CPUs was a lot lower than in 1 CPU and was brought down from 372.1s to 52.2s which meant that ready queue was already mostly empty on the dual-processor system. When CPUs were increased from 2 to 4, the total time spent in ready state further reduced to 0.0s due to which extra CPUs in the 4-CPU system would rarely have processes that can be scheduled on them, and would usually be in idle state. As a result, the extra CPUs in 4-CPU system are hardly utilized and execution time remains similar.
+
+Problem 2B (Shortest Job First Scheduler)
+----------
+
+Shortest Job First Scheduler looks at the shortest burst time for a process when scheduling it. It is essentially impossible to implement it precisely in real life because an OS does not exactly know the exact burst time before execution of the process. Since the OS doesn't know what the burst time of process is going to be, SJF is replaced with Priority algorithm because it is a simpler version of SJF which takes into account the priority of the process which can easily be assigned as compared to the burst time which cannot be predicted.
+
+Problem 3B (Round-Robin)
+----------
+200ms timeslice: 284.4s waiting time
+400ms timeslice: 291.7s waiting time
+600ms timeslice: 302.3s waiting time
+800ms timeslice: 317.1s waiting time
+
+As the length of timeslice increases, the waiting time also increases. This is because a longer time slice would be make the process spend a longer time in the ready queue before getting getting onto the processor. Since this is a single CPU system, there are a lot of processes in the ready queue at any given time which further amplifies this. However, in a real OS, the shortest timeslice won't be the best choice because it would require preempt(), schedule() and context_switch() methods to be called very frequently and since these methods have a non-negligible running time, using the shortest timeslice possible would make the CPU spend more time performing context switches and scheduling operations instead of running processes for CPU bursts. Due to this every process waits longer for time in the ready state which reduces efficiency and increases total execution time.
+
+Problem 5 (The Priority Inversion Problem)
+---------
+
+To address this problem we can increase the priority of the process using the shared resource S to be be equal to the highest priority for the duration that it is using the shared resource. This will make sure that no other process will force preempt on a process using the shared resource S before it has even released the lock on the shared resource. In our case, when P3 locks the shared resource S, its priority can be increased to a value that is equal to the priority of P1. So when P2 becomes runnable, it can no longer preempt P3 because P3 has higher priority than P2. When P3 finishes using its shared resource S, its priority is decreased back to low. If P1 is runnable, it can then preempt P3 and take over the lock on the shared resource safely. Since P1 has a higher priority than P2, it is no longer waiting for the shared resource to become available, it will run before P2 if it is runnable at that time.
+
